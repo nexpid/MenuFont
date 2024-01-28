@@ -4,4 +4,10 @@ Lets you choose a font from the available custom level fonts and use it as your 
 
 ![Example Fonts](resources/examples.png)
 
-Custom font support *coming soon™*
+## Contributing
+
+Any sort of contribution is GREATLY appreciated!! Consider [creating a pull request](https://github.com/nexpid/MenuFont/fork) :3
+
+## Custom Fonts
+
+Custom font support is coming soon...
