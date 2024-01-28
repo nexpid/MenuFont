@@ -1,0 +1,28 @@
+{
+  "geode": "v2.0.0",
+  "gd": {
+    "win": "2.204",
+    "android": "2.205"
+  },
+  "version": "v1.0.0-alpha.2",
+  "id": "nexpid.menufont",
+  "name": "Menu Font",
+  "developer": "nexpid",
+  "description": "Lets you choose a font from the available custom level fonts and use it as your menu font!",
+  "tags": ["Customization"],
+  "repository": "https://github.com/nexpid/MenuFont",
+  "issues": {
+    "info": "See any problems with the mod? Create an issue in the repo!",
+    "url": "https://github.com/nexpid/MenuFont/issues/new"
+  },
+  "settings": {
+    "font": {
+      "name": "Font",
+      "type": "custom"
+    }
+  },
+  "resources": {
+    "sprites": ["resources/*.png"]
+  },
+  "early-load": true
+}
