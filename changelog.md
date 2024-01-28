@@ -1,5 +1,9 @@
 # Changelog
 
+## <cy>v1.0.0-alpha.3</c> (2024-01-28)
+
+- Slight code bugfixes/changes
+
 ## <cy>v1.0.0-alpha.2</c> (2024-01-28)
 
 - Changed the logo

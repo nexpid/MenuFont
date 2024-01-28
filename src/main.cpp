@@ -2,15 +2,12 @@
 #include <Geode/cocos/menu_nodes/CCMenu.h>
 
 #include <Geode/Geode.hpp>
-#include <Geode/Loader.hpp>
 #include <Geode/binding/CCMenuItemSpriteExtra.hpp>
 #include <Geode/loader/SettingNode.hpp>
 #include <Geode/modify/CCLabelBMFont.hpp>
-#include <Geode/modify/EditLevelLayer.hpp>
-#include <Geode/modify/LevelEditorLayer.hpp>
-#include <Geode/modify/LevelInfoLayer.hpp>
-#include <Geode/modify/PlayLayer.hpp>
 #include <Geode/ui/Popup.hpp>
+#include <Geode/binding/GameManager.hpp>
+
 #include "Conversion.hpp"
 
 //                WARNING:
@@ -127,9 +124,9 @@ class SettingFontNode : public SettingNode {
             this,
             menu_selector(SettingFontNode::onSwapFont));
 
-        leftArrBtn->setTag(1000);
+        leftArrBtn->setTag(-1);
         leftArrBtn->setPositionX(30);
-        rightArrBtn->setTag(1001);
+        rightArrBtn->setTag(1);
         rightArrBtn->setPositionX(150);
 
         m_valueLabel = CCLabelBMFont::create(std::format("Font {}", m_fontIndex).c_str(), useFont(m_fontIndex).c_str());
@@ -151,9 +148,9 @@ class SettingFontNode : public SettingNode {
     }
 
     void onSwapFont(CCObject* sender) {
-        if (sender->getTag() == 1000) {
+        if (sender->getTag() == -1) {
             m_fontIndex = m_fontIndex == 1 ? 59 : m_fontIndex - 1;
-        } else if (sender->getTag() == 1001) {
+        } else if (sender->getTag() == 1) {
             m_fontIndex = (m_fontIndex % 59) + 1;
         }
         this->valueChanged();
@@ -248,7 +245,14 @@ void toRGB(float c, float m, float y, float k, float* rgb) {
     rgb[2] = -((y * (255 - k)) / 255 + k - 255);
 }
 
-bool inEditor = false;
+bool shouldDisable() {
+    auto manager = GameManager::get();
+
+    auto playLayer = manager->getPlayLayer();
+    auto editorLayer = manager->getEditorLayer();
+
+    return playLayer != nullptr || editorLayer != nullptr;
+}
 
 class $modify(CCLabelBMFont) {
     cocos2d::ccColor3B color;
@@ -264,7 +268,7 @@ class $modify(CCLabelBMFont) {
         if (
             std::string(fntFile).starts_with("gjFont") ||
             fntFile == std::string("chatFont.fnt") ||
-            inEditor
+            shouldDisable()
         )
             m_fields->disabled = true;
 
@@ -294,7 +298,8 @@ class $modify(CCLabelBMFont) {
             m_fields->color.r,
             m_fields->color.g,
             m_fields->color.b,
-            cmykBase);
+            cmykBase
+        );
 
         float cmykNew[4];
         toCMYK(color.r, color.g, color.b, cmykNew);
@@ -303,7 +308,8 @@ class $modify(CCLabelBMFont) {
             cmykBase[0] + cmykNew[0],
             cmykBase[1] + cmykNew[1],
             cmykBase[2] + cmykNew[2],
-            cmykBase[3] + cmykNew[3]};
+            cmykBase[3] + cmykNew[3]
+        };
 
         float rgbFinal[3];
         toRGB(cmykMix[0], cmykMix[1], cmykMix[2], cmykMix[3], rgbFinal);
@@ -319,32 +325,5 @@ class $modify(CCLabelBMFont) {
     }
     void setScale(float scale) {
         CCLabelBMFont::setScale(m_fields->disabled ? scale : scale * m_fields->scale);
-    }
-};
-
-// HORRIBLE CODE SORRY
-class $modify(LevelEditorLayer){
-    static LevelEditorLayer* create(GJGameLevel * p0, bool p1){
-        inEditor = true;
-        return LevelEditorLayer::create(p0, p1);
-    }
-};
-class $modify(PlayLayer){
-    static PlayLayer* create(GJGameLevel * p0, bool p1, bool p2){
-        inEditor = true;
-        return PlayLayer::create(p0, p1, p2);
-    }
-};
-
-class $modify(EditLevelLayer){
-    static EditLevelLayer* create(GJGameLevel * p0){
-        inEditor = false;
-        return EditLevelLayer::create(p0);
-    }
-};
-class $modify(LevelInfoLayer){
-    static LevelInfoLayer* create(GJGameLevel * p0, bool p1){
-        inEditor = false;
-        return LevelInfoLayer::create(p0, p1);
     }
 };
